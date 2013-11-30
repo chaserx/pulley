@@ -1,24 +1,18 @@
 # Pulley
 
-TODO: Write a gem description
+Command line application for updating all git repositories in a directory.
+
+# AUTHOR'S NOTE
+
+In hindsight, I can see why you might not want to automate this process. I'll leave this here for now as a guidepost.
 
 ## Installation
-
-Add this line to your application's Gemfile:
-
-    gem 'pulley'
-
-And then execute:
-
-    $ bundle
-
-Or install it yourself as:
 
     $ gem install pulley
 
 ## Usage
 
-TODO: Write usage instructions here
+pulley ~/code
 
 ## Contributing
 
