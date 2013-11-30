@@ -8,9 +8,9 @@ Gem::Specification.new do |spec|
   spec.version       = Pulley::VERSION
   spec.authors       = ["Chase Southard"]
   spec.email         = ["chase.southard@gmail.com"]
-  spec.description   = %q{TODO: Write a gem description}
-  spec.summary       = %q{TODO: Write a gem summary}
-  spec.homepage      = ""
+  spec.description   = %q{Update all git repos in a directory.}
+  spec.summary       = %q{Command line application for updating all git repositories in a directory.}
+  spec.homepage      = "https://github.com/chaserx/pulley"
   spec.license       = "MIT"
 
   spec.files         = `git ls-files`.split($/)
@@ -24,4 +24,6 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency('aruba')
   spec.add_development_dependency('rake', '~> 0.9.2')
   spec.add_dependency('methadone', '~> 1.3.1')
+  spec.add_dependency('git', '~> 1.2.6')
+  spec.add_dependency('progress_bar', '~> 1.0.0')
 end

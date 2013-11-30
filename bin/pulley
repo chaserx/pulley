@@ -3,22 +3,60 @@
 require 'optparse'
 require 'methadone'
 require 'pulley.rb'
+require 'pathname'
+require 'git'
+require 'open3'
+require 'progress_bar'
 
 class App
   include Methadone::Main
   include Methadone::CLILogging
+  include Methadone::SH
 
-  main do # Add args you want: |like,so|
-    # your program code here
-    # You can access CLI options via
-    # the options Hash
+  main do |directory|
+    exit_now!("Git is not installed. Maybe try:\n brew install git") if sh('which git') != 0
+
+    full_path = File.expand_path(directory)
+    # check if the directory exists
+    if File.exist? full_path
+      # get array of directories in directory
+      sub_paths = Pathname.new(full_path).children.select { |c| c.directory? }
+      bar = ProgressBar.new(sub_paths.count)
+      sub_paths.each do |path|
+        Dir.chdir(path.realpath.to_s) do
+          # with a .git directory, check for git branch
+          if File.exists?('.git')
+            # using open3 to supress stdout
+            stdin, stdout, stderr, wait_thr = Open3.popen3('git rev-parse --is-inside-work-tree')
+            if wait_thr.value == 0
+              # perform some git update magick
+              git_repo = Git.open(path.realpath.to_s)
+              if git_repo.remotes.any?
+                # would like to pull but fetch is ok for now
+                # git_repo.fetch
+                bar.increment!
+                next
+              else
+                bar.increment!
+                next
+              end
+            else
+              bar.increment!
+              next
+            end
+          end
+        end
+      end
+    else
+      exit_now!("Directory provided, #{directory}, does not exist")
+    end
   end
 
   # supplemental methods here
 
   # Declare command-line interface here
 
-  description "update all git repositories in a given directory"
+  description "Update all git repositories in a given directory."
   #
   # Accept flags via:
   # on("--flag VAL","Some flag")
@@ -30,7 +68,7 @@ class App
   # Or, just call OptionParser methods on opts
   #
   # Require an argument
-  arg :directory
+  arg :directory, "The directory with your repos that you want to update."
   #
   # # Make an argument optional
   # arg :optional_arg, :optional
